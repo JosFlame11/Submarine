@@ -1,10 +1,15 @@
+/*Se requiere agregar la libreria para la transmision de datos, se usara una distinta a RadioHead
+Agregar la lectura de la antena y con base a ello cambiar @/opc/
+*/
+
+
 #include <Arduino.h>
 
 #define Ain1 2 
 #define Ain2 15 
 #define Bin1 16 
 #define Bin2 17
-//#define stby 4 conectar directamente a 5V
+//#define stby 4 conectar directamente a 3.3V
 #define PWMA 26
 #define PWMB 33
 
@@ -21,6 +26,7 @@ const int motorChannel_B = 1;
 const int resolution = 8;
 
 const int velocity = 150; //from 0 to 255
+int opc = 0;
 
 void setup() {
   pinMode(Ain1, OUTPUT);
@@ -43,15 +49,30 @@ void setup() {
 
 void loop() {
   //Si la antena recive 1
-    //foward()
+  if (opc == 1){
+    foward();
+  }
   //si recive 2
-    //left()
+  else if (opc == 2){
+    left();
+  }
   //si recive 3
-    //right()
+  else if (opc == 3){
+    right();
+
+  }
   //si recive 4
-    //Down()
+
+  else if (opc == 4){
+    Down();
+  }
   //Si recive 5
-    //UP()
+  else if (opc == 5){
+    Up();
+  }
+  else{
+    opc = 0;
+  }
   
 }
 void foward(void){
