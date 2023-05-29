@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <SPI.h>
-#include <LoRa.h>
+
+
 
 //define X and Y for the joystick
 #define POTX 26
@@ -38,8 +38,8 @@ void setup() {
   DataSendInitMillis = millis();
 
   //Set buttons as inputs with a pullup resistance
-  pinMode(btn1, PULLUP);
-  pinMode(btn2, PULLUP);
+  pinMode(btn1, INPUT_PULLUP);
+  pinMode(btn2, INPUT_PULLUP);
 
   //set joystick as input
   pinMode(POTX, INPUT);
@@ -48,57 +48,46 @@ void setup() {
   pinMode(ss, OUTPUT);
 
   //init LoRa pins
-  LoRa.setPins(ss, rst, di0);
 
-  //init LoRa module
-  while (!LoRa.begin(frequency)){
-    Serial.println("LoRa init failed. Check connection");
-    delay(500);
-  }
-  Serial.println("LoRa initialize correctly");
 }
 
 void loop() {
-  
-  NewXValue = (float)analogRead(POTX)/4095 * 30;
+  NewXValue = (float)analogRead(POTX)/4095*30;
   if (NewXValue > XValue + 1 || NewXValue < XValue - 1){
     XValue = NewXValue;
-    Serial.println(XValue);
+    /*Serial.print("X: ");
+    Serial.println(XValue);*/
   }
-  NewYValue = (float)analogRead(POTY)/4095 * 30;
+  NewYValue = (float)analogRead(POTY)/4095*30;
   if (NewYValue > YValue + 1 || NewYValue < YValue - 1){
     YValue = NewYValue;
-    Serial.println(YValue);
+    /*Serial.print("Y: ");
+    Serial.println(YValue);*/
   }
-  if (YValue >= 15 && YValue <= 30){
+  if (XValue >= 20 && XValue <= 30){
     opc = 1;
   }
-  else if (XValue > 15 && YValue <= 30){
+  else if (YValue > 20 && YValue <= 30){
     opc = 2;
   }
-  else if (XValue >= 0 && XValue <= 15){
+  else if (YValue >= 0 && YValue <= 10){
     opc = 3;
   }
-  else{
-    Buttons();
+  else if (digitalRead(btn1) == HIGH && digitalRead(btn2) == LOW){
+    opc = 5;
+    }
+  else if (digitalRead(btn1) == LOW && digitalRead(btn2) == HIGH){
+    opc = 4;
   }
+  else {
+    opc = 0;
+  }
+  
   Serial.println(opc);
-}//establecer una funciona que diga, cuando Xpot esta en estos valores, devolver 2 o 3
+  
+  }
+  //Serial.println(opc);
+//establecer una funciona que diga, cuando Xpot esta en estos valores, devolver 2 o 3
   //Si Ypot tiene estos valores devolver 1 o 0
   //Crear funciones para los botones, si btn1 es high, devolver 4; si btn2 es high, devolver 5.
   //que btn1 y btn2 no puedan ser presionados a la misma vez.
-
-void LoRaSendData(int Data){
-  LoRa.disableInvertIQ();
-  LoRa.beginPacket();
-  LoRa.print(Data);
-  LoRa.endPacket();
-}
-void Buttons(){
-  if (btn1 == HIGH && btn2 == LOW){
-    opc = 4;
-  }
-  else if (btn1 == LOW && btn2 == HIGH){
-    opc = 5;
-  }
-}
