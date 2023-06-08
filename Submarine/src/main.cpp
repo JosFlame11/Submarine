@@ -123,7 +123,7 @@ void down(){
   digitalWrite(in5, LOW);
   digitalWrite(in6, HIGH);
 }
-int movement = 5;
+int movement;
 
 void setup() {
   SensorReadInitMillis = millis();
@@ -131,14 +131,14 @@ void setup() {
   ReceiverInitMillis = millis();
   Serial.begin(115200); //For debugging
 
-  /*init LoRa pins
-  //LoRa.setPins(ss, rst, dio0);
-  //if (!LoRa.begin(frequency)){
+  //init LoRa pins
+  LoRa.setPins(ss, rst, dio0);
+  if (!LoRa.begin(frequency)){
     Serial.println("LoRa init failed. Check connections.");
     while(true);
   }
   Serial.println("LoRa initialize correctly");
-*/
+
   //Make motors as ouputs
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
@@ -165,29 +165,26 @@ void setup() {
 
 void loop() {
   ledcWrite(motorChannel_A, vel);
- /* 
+ 
   int packetSize = LoRa.parsePacket();
   if (packetSize){
     while (LoRa.available()) {
       movement = LoRa.read();
       Serial.print(movement);
     }
-  }*/
+  }
 
 //It would move depedending the value that thee controller receives
 
   if (movement != 0){
     if (movement == 1){
-      Serial.println("1");
       foward();
     }
     else if (movement == 2){
       left();
-      Serial.println("2");
     }
     else if (movement == 3){
       right();
-      Serial.println("3");
     }
     else if (movement == 4){
       up();
