@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <SPI.h>
+#include <LoRa.h>
 
 
 
@@ -29,7 +31,7 @@ uint16_t YValue = 0;
 uint16_t NewYValue;
 
 int opc = 0;
-void Buttons();
+int newopc;
 
 void setup() {
   Serial.begin(115200); // For debugging
@@ -45,10 +47,15 @@ void setup() {
   pinMode(POTX, INPUT);
   pinMode(POTY, INPUT);
 
-  pinMode(ss, OUTPUT);
 
   //init LoRa pins
-
+  /*LoRa.setPins(ss, rst, di0);
+  if (!LoRa.begin(frequency)){
+    Serial.println("LoRa init failed. Check connections.");
+    while(true);
+  }
+  Serial.println("LoRa initialize correctly");
+*/
 }
 
 void loop() {
@@ -83,7 +90,10 @@ void loop() {
     opc = 0;
   }
   
-  Serial.println(opc);
+  if (newopc != opc){
+    Serial.println(opc);
+      newopc = opc;
+  }
   
   }
   //Serial.println(opc);
